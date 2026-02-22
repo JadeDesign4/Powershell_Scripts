@@ -1,0 +1,660 @@
+Certainly! Below is a comprehensive guide to common file manipulation commands used in Windows Command Prompt (CMD) and PowerShell, including examples and useful parameters. This will help you manage files effectively on Windows systems.
+
+ 
+
+File Manipulation Commands on Windows (CMD & PowerShell)
+
+ 
+
+1. Copy Files
+
+CMD:  copy 
+
+Purpose: Copy one or more files to another location.
+Syntax:
+
+ 
+copy [source] [destination] [/Y] [/V]
+ 
+Examples:
+
+ 
+copy file.txt D:\Backup\
+copy *.txt D:\Backup\ /Y
+ 
+Useful parameters:
+
+ /Y  — Suppress prompt to confirm overwriting a file.
+ /V  — Verify that new files are written correctly.
+
+ 
+
+PowerShell:  Copy-Item 
+
+Purpose: Copy files or directories.
+Syntax:
+
+ 
+Copy-Item -Path <source> -Destination <destination> [-Recurse] [-Force]
+ 
+Examples:
+
+ 
+Copy-Item -Path "file.txt" -Destination "D:\Backup\"
+Copy-Item -Path "*.txt" -Destination "D:\Backup\" -Recurse -Force
+ 
+Useful parameters:
+
+ -Recurse  — Copy all subdirectories and files.
+ -Force  — Overwrite read-only files or hidden files.
+
+ 
+
+2. Move Files
+
+CMD:  move 
+
+Purpose: Move files or rename them.
+Syntax:
+
+ 
+move [source] [destination]
+ 
+Examples:
+
+ 
+move file.txt D:\Documents\
+move oldname.txt newname.txt
+ 
+
+ 
+
+PowerShell:  Move-Item 
+
+Purpose: Move files or folders.
+Syntax:
+
+ 
+Move-Item -Path <source> -Destination <destination> [-Force]
+ 
+Examples:
+
+ 
+Move-Item -Path "file.txt" -Destination "D:\Documents\"
+Move-Item -Path "oldname.txt" -Destination "newname.txt"
+ 
+Useful parameters:
+
+ -Force  — Overwrite existing files without prompt.
+
+ 
+
+3. Delete Files
+
+CMD:  del  or  erase 
+
+Purpose: Delete one or more files.
+Syntax:
+
+ 
+del [filename] [/Q] [/F] [/S]
+ 
+Examples:
+
+ 
+del file.txt
+del *.tmp /Q /F
+ 
+Useful parameters:
+
+ /Q  — Quiet mode, no prompt for confirmation.
+ /F  — Force deletion of read-only files.
+ /S  — Delete specified files from all subdirectories.
+
+ 
+
+PowerShell:  Remove-Item 
+
+Purpose: Delete files or folders.
+Syntax:
+
+ 
+Remove-Item -Path <path> [-Recurse] [-Force]
+ 
+Examples:
+
+ 
+Remove-Item -Path "file.txt"
+Remove-Item -Path "*.tmp" -Recurse -Force
+ 
+Useful parameters:
+
+ -Recurse  — Delete all contents in subdirectories.
+ -Force  — Delete read-only or hidden files.
+
+ 
+
+4. Rename Files
+
+CMD:  ren  or  rename 
+
+Purpose: Rename files or directories.
+Syntax:
+
+ 
+ren [oldname] [newname]
+ 
+Examples:
+
+ 
+ren file.txt file_old.txt
+ren *.txt *.bak
+ 
+
+ 
+
+PowerShell:  Rename-Item 
+
+Purpose: Rename files or folders.
+Syntax:
+
+ 
+Rename-Item -Path <oldname> -NewName <newname>
+ 
+Examples:
+
+ 
+Rename-Item -Path "file.txt" -NewName "file_old.txt"
+Rename-Item -Path "*.txt" -NewName { $_.Name -replace '.txt','.bak' }
+ 
+
+ 
+
+5. Create Files
+
+CMD:  echo  or  type nul > 
+
+Purpose: Create a new empty file or write text to a file.
+Examples:
+
+ 
+echo Hello World > file.txt
+type nul > emptyfile.txt
+ 
+
+ 
+
+PowerShell:  New-Item 
+
+Purpose: Create new files or folders.
+Syntax:
+
+ 
+New-Item -Path <filename> -ItemType File
+ 
+Example:
+
+ 
+New-Item -Path "file.txt" -ItemType File
+ 
+
+ 
+
+6. View File Contents
+
+CMD:  type 
+
+Purpose: Display the contents of a text file.
+Example:
+
+ 
+type file.txt
+ 
+
+ 
+
+PowerShell:  Get-Content 
+
+Purpose: Display the contents of a file.
+Example:
+
+ 
+Get-Content -Path "file.txt"
+ 
+
+ 
+
+7. Compare Files
+
+PowerShell:  Compare-Object 
+
+Purpose: Compare contents of two files.
+Example:
+
+ 
+Compare-Object (Get-Content file1.txt) (Get-Content file2.txt)
+ 
+
+ 
+
+8. Other Useful File Commands
+
+ Command  Purpose  Notes 
+  attrib   View or change file attributes  e.g., read-only, hidden 
+  fc   Compare two files line by line  Useful for text file differences 
+  xcopy   Copy files and directories with options  More powerful than  copy  
+  robocopy   Robust file copy with resume and logging  Ideal for large or complex copies 
+
+ 
+
+Example: Using  robocopy  to copy a folder with subfolders and logging
+
+ 
+robocopy C:\SourceFolder D:\BackupFolder /E /Z /LOG:C:\log.txt
+ 
+
+ /E  — Copy all subdirectories including empty ones.
+ /Z  — Copy files in restartable mode.
+ /LOG  — Output log to specified file.
+
+ 
+
+Summary Table of Common File Commands
+
+ Command  Platform  Purpose  Key Parameters/Options 
+  copy   CMD  Copy files   /Y ,  /V  
+  xcopy   CMD  Copy files & folders   /E ,  /H ,  /C  
+  robocopy   CMD  Robust copy   /E ,  /Z ,  /LOG  
+  move   CMD/PowerShell  Move or rename files   -Force  (PowerShell) 
+  del  /  erase   CMD  Delete files   /Q ,  /F ,  /S  
+  Remove-Item   PowerShell  Delete files/folders   -Recurse ,  -Force  
+  ren  /  rename   CMD  Rename files   
+  Rename-Item   PowerShell  Rename files   
+  echo   CMD  Create/write files   
+  New-Item   PowerShell  Create files/folders   
+  type   CMD  View file content   
+  Get-Content   PowerShell  View file content   
+
+ 
+
+	Text Manipulation
+
+Certainly! Below is a detailed guide to text and string manipulation commands on Windows, covering both Command Prompt (CMD) and PowerShell. These commands help you process, search, modify, and analyze text and strings efficiently.
+
+ 
+
+Text and String Manipulation Commands on Windows
+
+ 
+
+1. Find Text in Files
+
+CMD:  find 
+
+Purpose: Search for a specific string in a file or input.
+Syntax:
+
+ 
+find "string" filename
+ 
+Example:
+
+ 
+find "error" logfile.txt
+ 
+Useful parameters:
+
+ /I  — Case-insensitive search.
+ /N  — Display line numbers.
+
+ 
+
+PowerShell:  Select-String 
+
+Purpose: Search for text patterns in files or strings (like grep).
+Syntax:
+
+ 
+Select-String -Pattern "string" -Path filename
+ 
+Example:
+
+ 
+Select-String -Pattern "error" -Path "logfile.txt"
+ 
+Useful parameters:
+
+ -CaseSensitive  — Make search case-sensitive.
+ -AllMatches  — Find all matches in each line.
+ -Context  — Show lines before and after the match.
+
+ 
+
+2. Replace Text in Files or Strings
+
+PowerShell:  -replace  operator
+
+Purpose: Replace text in strings or file content.
+Syntax:
+
+ 
+$newString = $oldString -replace "oldText", "newText"
+ 
+Example:
+
+ 
+$text = "Hello World"
+$text = $text -replace "World", "PowerShell"
+Write-Output $text  # Output: Hello PowerShell
+ 
+Replace text in a file:
+
+ 
+(Get-Content file.txt) -replace "oldText", "newText" | Set-Content file.txt
+ 
+
+ 
+
+3. Extract Substrings
+
+PowerShell:  Substring()  method
+
+Purpose: Extract part of a string.
+Syntax:
+
+ 
+$substring = $string.Substring(startIndex, length)
+ 
+Example:
+
+ 
+$text = "Hello PowerShell"
+$sub = $text.Substring(6, 10)
+Write-Output $sub  # Output: PowerShell
+ 
+
+ 
+
+4. Split Strings
+
+PowerShell:  -split  operator or  .Split()  method
+
+Purpose: Split a string into an array based on a delimiter.
+Syntax:
+
+ 
+$array = $string -split "delimiter"
+ 
+Example:
+
+ 
+$csv = "apple,banana,orange"
+$fruits = $csv -split ","
+$fruits[1]  # Output: banana
+ 
+
+ 
+
+5. Join Strings
+
+PowerShell:  -join  operator
+
+Purpose: Join an array of strings into one string.
+Syntax:
+
+ 
+$joined = $array -join "delimiter"
+ 
+Example:
+
+ 
+$array = @("apple", "banana", "orange")
+$csv = $array -join ","
+Write-Output $csv  # Output: apple,banana,orange
+ 
+
+ 
+
+6. Convert Case
+
+PowerShell:  .ToUpper()  and  .ToLower()  methods
+
+Purpose: Convert string to uppercase or lowercase.
+Examples:
+
+ 
+$text = "Hello World"
+$upper = $text.ToUpper()
+$lower = $text.ToLower()
+Write-Output $upper  # Output: HELLO WORLD
+Write-Output $lower  # Output: hello world
+ 
+
+ 
+
+7. Trim Strings
+
+PowerShell:  .Trim() ,  .TrimStart() ,  .TrimEnd() 
+
+Purpose: Remove whitespace or specified characters from the start/end of a string.
+Examples:
+
+ 
+$text = "  Hello World  "
+$trimmed = $text.Trim()
+Write-Output $trimmed  # Output: Hello World
+ 
+
+ 
+
+8. Get String Length
+
+PowerShell:  .Length  property
+
+Purpose: Get the number of characters in a string.
+Example:
+
+ 
+$text = "Hello"
+$length = $text.Length
+Write-Output $length  # Output: 5
+ 
+
+ 
+
+9. Concatenate Strings
+
+PowerShell: Using  +  operator or string interpolation
+
+Examples:
+
+ 
+$a = "Hello"
+$b = "World"
+$c = $a + " " + $b
+Write-Output $c  # Output: Hello World
+
+# Using string interpolation
+$name = "PowerShell"
+Write-Output "Hello, $name!"
+ 
+
+ 
+
+10. Regular Expressions
+
+PowerShell:  -match ,  -replace ,  Select-String 
+
+Match example:
+
+ 
+$text = "My phone number is 123-456-7890"
+if ($text -match "\d{3}-\d{3}-\d{4}") {
+    Write-Output "Phone number found: $($matches[0])"
+}
+ 
+Replace example:
+
+ 
+$text = "My phone number is 123-456-7890"
+$newText = $text -replace "\d{3}-\d{3}-\d{4}", "XXX-XXX-XXXX"
+Write-Output $newText
+ 
+
+ 
+
+11. Extract Lines from Files
+
+PowerShell:  Get-Content  with filtering
+
+Example: Get first 10 lines
+
+ 
+Get-Content file.txt -TotalCount 10
+ 
+Example: Get lines matching a pattern
+
+ 
+Get-Content file.txt | Where-Object { $_ -match "error" }
+ 
+
+ 
+
+12. Replace Text in Multiple Files
+
+PowerShell example:
+
+ 
+Get-ChildItem -Path . -Filter *.txt | ForEach-Object {
+    (Get-Content $_.FullName) -replace "oldText", "newText" | Set-Content $_.FullName
+}
+ 
+
+ 
+
+Summary Table of Key Text/String Commands in PowerShell
+
+ Command / Operator  Purpose  Example 
+  Select-String   Search text in files   Select-String -Pattern "error" file.txt  
+  -replace   Replace text   $text -replace "old", "new"  
+  .Substring()   Extract substring   $text.Substring(0,5)  
+  -split   Split string   $text -split ","  
+  -join   Join array to string   $array -join ","  
+  .ToUpper() ,  .ToLower()   Change case   $text.ToUpper()  
+  .Trim()   Trim whitespace   $text.Trim()  
+  .Length   Get string length   $text.Length  
+  -match   Regex match   $text -match "\d+"  
+  Get-Content   Read file content   Get-Content file.txt  
+
+ 
+
+	Advanced Text and File Manipulation
+
+Certainly! Beyond the common file and text manipulation commands I shared earlier, there are several other useful commands and tools on Windows that can help with advanced text processing, scripting, and automation. Here are some additional commands and utilities you might find valuable:
+
+ 
+
+Additional Useful Commands and Tools for File and Text Manipulation on Windows
+
+ 
+
+1.  findstr  (CMD)
+
+Purpose: More powerful text search tool than  find , supports regular expressions.
+Example:
+
+ 
+findstr /R /C:"error.*critical" logfile.txt
+ 
+Useful parameters:
+
+ /R  — Use regular expressions.
+ /S  — Search in subdirectories.
+ /I  — Case-insensitive search.
+ /N  — Show line numbers.
+
+ 
+
+2.  for  Loop (CMD)
+
+Purpose: Iterate over files or strings for batch processing.
+Example:
+
+ 
+for %f in (*.txt) do type %f
+ 
+Use in batch scripts: double  %  signs ( %%f ).
+
+ 
+
+3.  set  and  setlocal  (CMD)
+
+Purpose: Manage environment variables and string manipulation in batch scripts.
+Example:
+
+ 
+set var=Hello
+echo %var%
+ 
+Substring example:
+
+ 
+set var=HelloWorld
+echo %var:~0,5%  (outputs Hello)
+ 
+
+ 
+
+4. PowerShell Advanced String Methods
+
+ .Contains() ,  .StartsWith() ,  .EndsWith()  for string checks.
+
+ 
+$text = "Hello World"
+if ($text.Contains("World")) { Write-Output "Found" }
+ 
+
+ 
+
+5.  Out-File  (PowerShell)
+
+Purpose: Redirect output to a file.
+Example:
+
+ 
+Get-Process | Out-File processes.txt
+ 
+
+ 
+
+6.  Measure-Object  (PowerShell)
+
+Purpose: Count lines, words, characters in text.
+Example:
+
+ 
+Get-Content file.txt | Measure-Object -Line -Word -Character
+ 
+
+ 
+
+7.  Format-Table  and  Format-List  (PowerShell)
+
+Purpose: Format output for readability.
+Example:
+
+ 
+Get-Process | Format-Table Name, Id, CPU -AutoSize
+ 
+
+ 
+
+8. Third-Party Tools
+
+ grep  for Windows: Available via Git Bash, Cygwin, or GnuWin32.
+ sed  and  awk : Powerful text processing tools available via Unix-like environments on Windows.
+ jq : For JSON text manipulation.
+
+ 
+
+If you want, I can provide detailed examples or installation instructions for any of these tools or commands. Would you like that?

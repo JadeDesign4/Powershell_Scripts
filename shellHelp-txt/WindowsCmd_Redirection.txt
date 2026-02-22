@@ -1,0 +1,23 @@
+1. Redirect STDOUT only to a file:
+	command > output.txt
+
+2. Redirect STDERR only to a file:
+	command 2> error.txt	(STDOUT will still print to the console)
+
+
+3. Redirect both STDOUT and STDERR to the same file
+	command > all_output.txt 2>&1
+	Note: The 2>&1 must appear after the "> all_output" part so that the STDERR (stream 2) is redirected to where
+	STDOUT (stream 1) is already pointing (the file).
+
+4. Redirect STDOUT to one file and STDERR to another:
+	command > stdout.txt 2> stderr.txt
+	Note: This sends normal output and error mesg in separate files
+
+5. Append both STDOUT and STDERR to the same file
+	command >> all_ouput.txt 2>&1 
+	Note: the ">" operator overwrites files, while the ">>" operator appends files (adds to the bottom of the existing content)
+
+6. Silence all output (redirect both to NUL):
+	command > null 2>&1
+
