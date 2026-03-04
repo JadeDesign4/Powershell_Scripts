@@ -1,7 +1,9 @@
-$path = "C:\Users\Public\Documents\powershellScripts" # Replace the path to your target directory
+$path = "~" # Replace the path to your target directory
+$target = "~\scripts"
 
 if (Test-Path $path -PathType Container){
-	"Directory: $path Exists"
+	Write-Output "Directory: $path Exists";
+	New-Item -ItemType Directory $target
 } else {
-	New-Item -ItemType Directory $path
+	Write-Output "Oops! Looks like you need to change the path..."
 }
