@@ -1,0 +1,14 @@
+    
+       COMMAND TO FETCH FILES FROM MY GIT REPO
+  
+  1. cd "path\to\folder" (local folder I'm pulling the files to)
+  
+  2. git init (Initialize git)
+  
+  3. git remote add origin "https://github.com/username/your_repo" (Add the repo as remote named origin)
+  
+  4. git fetch origin
+     git checkout -b "local_branch" "origin/remote_branch"
+       (This will create a local branch tracking the remote branch)
+       
+  5. git pull origin zsh (Pull all files from the remote branch into the local folder)

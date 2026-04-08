@@ -1,0 +1,16 @@
+    
+        COMMANDS TO PUSH LOCAL CHANGES TO GITHUB
+   
+   1. git branch 
+      git status   
+        (First, confirm you are on the local branch)
+   
+   2. git checkout "Name_of_localbranch" (If you are not on the "remote_branch", switch to it)
+   
+   3. git add . (Add the files you want to push to the staging area)
+            or
+      git add "filename"
+      
+   4. git commit -m "Your descriptive commit message here" (Commit your staged changes with a descriptive mssg)
+   
+   5. git push origin "branchname" (Push changes to the remote repo branch on github). 
