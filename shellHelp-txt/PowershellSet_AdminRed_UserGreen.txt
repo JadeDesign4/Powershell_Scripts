@@ -1,0 +1,62 @@
+Setting up a **PowerShell Profile** is a great "quality of life" upgrade. It’s essentially a script that runs every single time you open PowerShell, allowing you to customize your environment.
+
+### 1. Create your Profile
+First, check if a profile already exists. If not, this command will create one for you:
+
+```powershell
+if (!(Test-Path -Path $PROFILE)) {
+  New-Item -ItemType File -Path $PROFILE -Force
+}
+```
+
+### 2. Edit the Profile
+Open the profile script in Notepad:
+```powershell
+notepad $PROFILE
+```
+
+### 3. Add the "Admin Indicator" Logic
+Copy and paste the following code into the Notepad window that just opened. This code redefines your prompt to check for Admin rights and change colors accordingly:
+
+```powershell
+function prompt {
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($identity)
+    $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+    # Set prompt color: Red for Admin, Green for Standard
+    if ($isAdmin) {
+        Write-Host "[ADMIN] " -NoNewline -ForegroundColor Red
+    } else {
+        Write-Host "[USER] " -NoNewline -ForegroundColor Green
+    }
+
+    # Show the current path and the classic '>'
+    Write-Host "$($executionContext.SessionState.Path.CurrentLocation)" -NoNewline
+    return "> "
+}
+```
+
+### 4. Save and Restart
+1. Save the file in Notepad (**Ctrl + S**) and close it.
+2. Close PowerShell and reopen it.
+
+---
+
+### Troubleshooting: Execution Policy
+If you get an error saying "scripts are disabled on this system" when you restart PowerShell, you need to allow local scripts to run. Run this command **once** as Administrator:
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Force
+```
+
+### What this looks like:
+Now, whenever you open the terminal:
+* If it's **Standard**, your prompt will look like: `[USER] C:\Users\Name> ` (in Green).
+* If it's **Administrator**, it will look like: `[ADMIN] C:\Windows\system32> ` (in Red).
+
+
+
+It’s a simple visual cue that prevents you from typing out a long command only to realize you forgot to "Run as Admin." 
+
+Since you are diving into customization, would you like to know how to add **aliases** to that same profile so you can create your own custom shortcut commands?

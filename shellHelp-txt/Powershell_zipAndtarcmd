@@ -1,0 +1,65 @@
+To extract a tar file in Windows Terminal (using Command Prompt or PowerShell), you can use the built-in tar command introduced in Windows 10. [1, 2] 
+## Basic Extraction Command
+The most common command to extract a .tar or .tar.gz file into your current directory is: [3, 4] 
+
+tar -xvzf filename.tar.gz
+
+## Breakdown of Command Flags
+
+* -x: Tells tar to extract the files.
+* -v: Enables verbose mode, showing you the list of files as they are being extracted.
+* -z: Tells tar to decompress the file (required for .gz or .tgz formats).
+* -f: Informs the utility that the next argument is the filename. [5, 6, 7, 8] 
+
+## Advanced Options
+
+* Extract to a specific folder: Use the -C (uppercase) flag followed by the destination path.
+
+tar -xvzf filename.tar.gz -C C:\Path\To\Destination
+
+* Extract a simple .tar (not compressed): You can omit the -z flag.
+
+tar -xvf filename.tar
+
+[6, 7, 9, 10] 
+
+## Step-by-Step Instructions
+
+   1. Open Windows Terminal: Press Win + X and select Terminal or PowerShell.
+   2. Navigate to your file: Use the cd command to enter the folder where your file is saved.
+   * Tip: You can right-click the file in File Explorer and select Copy as path to quickly get the full directory.
+   3. Run the command: Type the extraction command and press Enter. [11, 12, 13] 
+
+
+To extract a ZIP file in Windows Terminal, you can use either the tar command or a PowerShell cmdlet. [1, 2, 3] 
+## Option 1: Using the tar Command
+This is the simplest way and works in both Command Prompt and PowerShell on Windows 10 (build 17063+) and Windows 11. [2, 4] 
+
+* Extract to current folder:
+
+tar -xf filename.zip
+
+* Extract to a specific folder:
+
+tar -xf filename.zip -C C:\Path\To\Extract
+
+[2, 5, 6] 
+
+## Option 2: Using PowerShell (Expand-Archive) [7] 
+If you are already in a PowerShell tab, you can use a native cmdlet designed specifically for ZIP files. [3, 8] 
+
+* Basic extraction:
+
+Expand-Archive -Path "C:\path\to\file.zip" -DestinationPath "C:\destination\folder"
+
+Compress-Archive -Path "C:\path\to\file.zip" -DestinationPath "C:\destination\folder"
+
+* Overwrite existing files: Add the -Force parameter to the end if the destination folder already contains files with the same names. [2, 3] 
+
+## Using a Third-Party Tool (7-Zip) [9] 
+If you have 7-Zip installed, you can use its command-line version (7z.exe) for more advanced options or better compression. [10, 11] 
+
+7z x filename.zip -o"C:\destination\folder"
+
+Pro Tip: If your file path has spaces, always wrap it in double quotes (e.g., "C:\My Folder\file.zip") to avoid errors. [3] 
+

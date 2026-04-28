@@ -1,0 +1,67 @@
+Changing the timezone via PowerShell is actually a lot more straightforward than digging through the Windows Settings menus. You’ll be using the `Set-TimeZone` cmdlet.
+
+Here is the breakdown of how to see what you have and how to change it.
+
+---
+
+### 1. Check your current Timezone
+Before making changes, it’s a good idea to see what your system is currently set to.
+```powershell
+Get-TimeZone
+```
+
+### 2. Find the correct Timezone ID
+Windows uses specific "Standard Names" for timezones (e.g., "Pacific Standard Time"). To see a full list of every available timezone on your system so you get the spelling exactly right, run:
+```powershell
+Get-TimeZone -ListAvailable
+```
+> **Tip:** Since that list is huge, you can filter it. For example, if you are looking for New York:
+> `Get-TimeZone -ListAvailable | Where-Object {$_.Id -like "*Eastern*"}`
+
+---
+
+### 3. Set the new Timezone
+Once you have the exact **Id**, use the following command (replace the name in quotes with your desired zone):
+
+```powershell
+Set-TimeZone -Id "GMT Standard Time"
+```
+
+### Summary Table of Common IDs
+| Location | Timezone ID |
+| :--- | :--- |
+| **New York / West Coast** | `Eastern Standard Time` |
+| **London / UTC** | `GMT Standard Time` |
+| **Paris / Berlin** | `W. Europe Standard Time` |
+| **Tokyo** | `Tokyo Standard Time` |
+| **Sydney** | `AUS Eastern Standard Time` |
+
+---
+
+### A Quick Note on Permissions
+You generally need **Administrator privileges** to change system-wide settings like the timezone. If you get an "Access Denied" error, right-click your PowerShell icon and select **"Run as Administrator."**
+
+The Windows Timezone ID for Nigeria (Lagos) is **`W. Central Africa Standard Time`**.
+
+Even though the local time in Nigeria is officially called West Africa Time (WAT), Windows uses the "West Central Africa" label for this zone (UTC+01:00).
+
+### The Command
+To set your computer to Lagos time, run this in PowerShell (as Administrator):
+
+```powershell
+Set-TimeZone -Id "W. Central Africa Standard Time"
+```
+
+---
+
+### Verification
+If you want to double-check that it’s available and see the details before applying it, you can run:
+
+```powershell
+Get-TimeZone -Id "W. Central Africa Standard Time"
+```
+
+**What you should see:**
+* **Id:** W. Central Africa Standard Time
+* **DisplayName:** (UTC+01:00) West Central Africa
+* **StandardName:** W. Central Africa Standard Time

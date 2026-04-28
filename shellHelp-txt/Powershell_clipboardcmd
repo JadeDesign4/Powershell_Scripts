@@ -1,0 +1,32 @@
+On Windows, the easiest way to do this is using the built-in Set-Clipboard command (or its shorter alias, scb).
+## 1. Using Pipes (Most Common)
+If you want to send the output of a command directly to your clipboard:
+
+echo "Hello from the terminal" | Set-Clipboard
+
+Or using the alias:
+
+ipconfig | scb
+
+## 2. Passing a Specific String
+If you just want to put a specific piece of text onto the clipboard without echoing it first:
+
+Set-Clipboard -Value "This text is now copied"
+
+## 3. Copying the Contents of a File
+If you have a log file or a config file and want the whole thing on your clipboard:
+
+Get-Content .\myfile.txt | Set-Clipboard
+
+## 4. The "Old School" Way (Works in CMD too)
+If you are in a regular Command Prompt or just prefer the classic tool, Windows has had clip for decades:
+
+echo "Legacy copy" | clip
+
+## Pro Tip: Appending Text
+Unlike the old clip tool, the PowerShell Set-Clipboard command can append text to what is already there instead of overwriting it:
+
+Set-Clipboard -Value "New line of text" -Append
+
+Since you just installed the edit tool, are you trying to copy a specific config file or a script you're working on?
+

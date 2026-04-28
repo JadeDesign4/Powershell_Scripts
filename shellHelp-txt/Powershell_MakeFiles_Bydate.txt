@@ -1,0 +1,48 @@
+To create files named with a specific date format, you need to combine a loop with the `-Format` parameter of the `Get-Date` cmdlet.
+
+In PowerShell, the custom date format strings are case-sensitive:
+* `dd`: Day (01-31)
+* `MM`: Month (01-12) — *Note: `mm` is for minutes!*
+* `yyyy`: Year (2026)
+
+### The One-Liner
+This script loops through the numbers 1 to 10, adds that number of days to "today," formats the result, and creates the file:
+
+```powershell
+1..10 | ForEach-Object { 
+    $Date = (Get-Date).AddDays($_).ToString("dd_MM_yyyy")
+    New-Item -Path "Day_$Date.ps1" -ItemType "File"
+}
+```
+
+---
+
+### Breaking Down the Logic
+1.  **`1..10`**: This creates an array of numbers from 1 to 10.
+2.  **`ForEach-Object { ... }`**: This tells PowerShell to run the code inside the brackets for every number in that range.
+3.  **`$_`**: This is a special variable that represents the "current item" in the loop (the numbers 1, then 2, then 3...).
+4.  **`.AddDays($_)`**: This calculates a future date based on the current loop number.
+5.  **`.ToString("dd_MM_yyyy")`**: This converts the date object into the specific text format you asked for.
+
+### Customizing the Format
+If you want the **Month Name** (like "April") instead of the number, you can tweak the format string:
+
+| Desired Format | String | Result Example |
+| :--- | :--- | :--- |
+| **Number** | `"dd_MM_yyyy"` | `28_04_2026` |
+| **Short Name** | `"dd_MMM_yyyy"` | `28_Apr_2026` |
+| **Full Name** | `"dd_MMMM_yyyy"` | `28_April_2026` |
+
+**Example for "Day_April_28_2026.ps1":**
+```powershell
+1..10 | ForEach-Object {
+    $Date = (Get-Date).AddDays($_).ToString("MMMM_dd_yyyy")
+    New-Item -Path "Day_$Date.ps1" -ItemType "File"
+}
+```
+
+### Pro Tip: Testing first
+If you're ever worried about creating 100 files by mistake, swap `New-Item` with `Write-Host` to see what the names *would* look like before you actually create them:
+`Write-Host "Would create file: Day_$Date.ps1"`
+
+Does that format look like what you were aiming for, or did you want the "Day" part of the filename to be the actual name of the day (e.g., Monday, Tuesday)?

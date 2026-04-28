@@ -1,0 +1,66 @@
+To list files based on their metadata (dates), you’ll use the `Get-ChildItem` cmdlet combined with `Where-Object` to filter the results.
+
+In PowerShell, every file object has three main timestamps you can look at:
+1.  **`LastWriteTime`**: When the file was last modified.
+2.  **`CreationTime`**: When the file was first created.
+3.  **`LastAccessTime`**: When the file was last opened/read.
+
+---
+
+### 1. List Files Modified in the Last 24 Hours
+This is the most common request. We calculate "24 hours ago" by taking the current date and subtracting one day.
+
+```powershell
+$Yesterday = (Get-Date).AddDays(-1)
+
+Get-ChildItem -Path "C:\YourFolder" | Where-Object { $_.LastWriteTime -gt $Yesterday }
+```
+* **`-gt`**: Stands for "Greater Than" (i.e., the date is newer than yesterday).
+* **`$_`**: Represents each file being checked in the list.
+
+### 2. List Files Created After a Specific Date
+If you want to find files created since the start of the year or a specific event:
+
+```powershell
+Get-ChildItem -Path "C:\YourFolder" | Where-Object { $_.CreationTime -gt "2026-01-01" }
+```
+
+### 3. Sort by Most Recent (Modified)
+If you don't want to filter, but just want to see the most recently changed files at the top of the list:
+
+```powershell
+Get-ChildItem | Sort-Object LastWriteTime -Descending
+```
+
+---
+
+### 4. Advanced: Combining Filters (Modified AND Created)
+You can use logic operators like `-and` or `-or`. For example, to find files that were either created **or** modified in the last 2 hours:
+
+```powershell
+$Limit = (Get-Date).AddHours(-2)
+
+Get-ChildItem | Where-Object { $_.LastWriteTime -gt $Limit -or $_.CreationTime -gt $Limit }
+```
+
+### Quick Reference Table: PowerShell Comparison Operators
+PowerShell doesn't use symbols like `>` or `<` for comparisons; it uses letter codes:
+
+| Operator | Meaning |
+| :--- | :--- |
+| **`-gt`** | Greater Than (Newer/After) |
+| **`-ge`** | Greater than or Equal to |
+| **`-lt`** | Less Than (Older/Before) |
+| **`-le`** | Less than or Equal to |
+| **`-eq`** | Exactly Equal to |
+
+---
+
+### Pro Tip: Look inside Subfolders
+By default, `Get-ChildItem` only looks at the folder you specify. If you want to search through every subfolder as well, add the **`-Recurse`** parameter:
+
+```powershell
+Get-ChildItem -Recurse | Where-Object { $_.LastWriteTime -gt (Get-Date).AddDays(-7) }
+```
+
+Are you looking to perform an action on these files (like moving or deleting them), or do you just need to export this list to a file?

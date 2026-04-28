@@ -1,0 +1,68 @@
+Changing file permissions in PowerShell is done by manipulating the **Access Control List (ACL)**. It is a bit more technical than changing the timezone because it involves three steps: getting the existing rules, creating a new rule, and applying it back to the file.
+
+### The Basics: `Get-Acl` and `Set-Acl`
+
+To manage permissions, you use two primary cmdlets:
+* **`Get-Acl`**: Reads the current permissions of a file or folder.
+* **`Set-Acl`**: Applies a modified permission object back to the file or folder.
+
+---
+
+### Step-by-Step: Adding "Full Control" for a User
+
+If you want to give a specific user full access to a folder, follow this pattern:
+
+```powershell
+# 1. Define the path and the user
+$Path = "C:\MyFolder"
+$User = "YourUserName"
+
+# 2. Get the current ACL of the folder
+$Acl = Get-Acl $Path
+
+# 3. Define the new permission rule
+# Arguments: (User, Rights, Inheritance, Propagation, Type)
+$Ar = New-Object System.Security.AccessControl.FileSystemAccessRule($User, "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
+
+# 4. Add the rule to the ACL object
+$Acl.SetAccessRule($Ar)
+
+# 5. Apply the modified ACL back to the folder
+Set-Acl $Path $Acl
+```
+
+### Understanding the Permission Arguments
+When creating a `FileSystemAccessRule`, you define how the permission behaves:
+
+| Argument | Options / Description |
+| :--- | :--- |
+| **Rights** | `Read`, `Write`, `Modify`, `FullControl`, `Delete` |
+| **Inheritance** | `ContainerInherit` (folders), `ObjectInherit` (files) |
+| **Type** | `Allow` or `Deny` |
+
+---
+
+### How to Remove a Permission
+If you want to strip a specific user's access, the process is almost identical, but you use the `.RemoveAccessRule()` method instead:
+
+```powershell
+$Acl = Get-Acl "C:\MyFolder"
+$Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("YourUserName", "FullControl", "Allow")
+$Acl.RemoveAccessRule($Ar)
+Set-Acl "C:\MyFolder" $Acl
+```
+
+---
+
+### The "Pro" Shortcut: Using `icacls`
+While `Set-Acl` is the "pure" PowerShell way, many system admins still use the `icacls` command because it is much faster and easier to type for simple tasks.
+
+**To grant a user modify access:**
+```powershell
+icacls "C:\MyFolder" /grant YourUserName:M /T
+```
+* `/grant`: Give permissions.
+* `:M`: Modify access (use `:F` for Full Control, `:R` for Read).
+* `/T`: Apply recursively to all subfolders and files.
+
+> **Note:** Just like the timezone command, you must run PowerShell as an **Administrator** to modify permissions on most directories.
