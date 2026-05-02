@@ -1,0 +1,35 @@
+In PowerShell, while echo works (it’s an alias for Write-Output), the way you manipulate text is slightly different than in a standard Bash shell. PowerShell uses "escape characters" starting with a backtick ( ` ), not a backslash.
+Here is how to handle the specific formatting you asked for:
+## 1. Adding Tabs and Newlines
+You must use double quotes (" ") for PowerShell to interpret these special characters.
+
+* New Line: `n
+* Horizontal Tab: `t
+
+Example:
+
+echo "Column1`tColumn2`nRow2"
+
+## 2. No New Line (Stay on the same line)
+The echo (Write-Output) command automatically adds a newline at the end and doesn't have a built-in switch to stop it. To keep the cursor on the same line, you should use Write-Host with the -NoNewline parameter.
+Example:
+
+Write-Host "Loading data..." -NoNewline
+Write-Host " Done!"# Output: Loading data... Done!
+
+## 3. Other Useful Manipulations
+
+* Adding Color: Since you're already using Write-Host for newlines, you can also add flavor:
+
+Write-Host "ERROR:" -ForegroundColor Red -NoNewline
+Write-Host " File not found."
+
+* Literal Backticks: If you actually want to print a backtick character, use two of them: ``.
+* Variable Expansion: Double quotes allow you to put variables directly in the string:
+
+$name = "User"
+echo "Hello `t $name"
+
+
+Quick Tip: If you are coming from a Linux background, remember that single quotes (' ') in PowerShell are literal—they will ignore the backticks and print `n exactly as text.
+
