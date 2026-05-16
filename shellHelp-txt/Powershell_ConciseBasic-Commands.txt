@@ -1,0 +1,88 @@
+PowerShell is more than just a terminal; it is an automation engine. Below is a comprehensive guide categorized by the core areas you requested, blending the essentials with those "hidden gem" commands that make life easier.
+
+---
+
+## 1. File Navigation & Manipulation
+While `cd`, `ls`, and `mkdir` work (as aliases), the native PowerShell cmdlets are more powerful.
+
+* **`Get-ChildItem` (ls/dir):** Lists items. 
+    * *Hidden Gem:* `Get-ChildItem -Path . -Include *.ps1 -Recurse` (Finds all scripts in subfolders).
+* **`Set-Location` (cd):** Changes directory. 
+    * *Hidden Gem:* `Push-Location` and `Pop-Location`. Use `pushd` to save your current spot, move elsewhere, and `popd` to teleport back instantly.
+* **`New-Item`:** Creates files or folders.
+    * *Power Move:* `New-Item -Path "./Logs" -ItemType Directory`
+* **`Test-Path`:** Checks if a file or folder exists. Returns `True` or `False`. Perfect for scripts.
+
+---
+
+## 2. Permissions Management (ACL)
+PowerShell handles permissions via Access Control Lists (ACL).
+
+* **`Get-Acl`:** View who has access to a file.
+* **`Set-Acl`:** Apply permissions from one object to another.
+* **The "Powerful but Barely Used" Command:**
+    * **`Unblock-File`:** When you download a script from the web, Windows marks it as "unsafe." Instead of right-clicking properties, just run `Unblock-File -Path ./myscript.ps1`.
+
+---
+
+## 3. Disk & Drive Management
+These commands replace the old `diskpart` and `diskmgmt.msc` GUI.
+
+* **`Get-Disk`:** Lists all physical disks.
+* **`Get-Volume`:** Shows all partitions (C:, D:, etc.) and their health/size.
+* **`Get-PSDrive`:** Shows you all drives PowerShell can "see." 
+    * *Hidden Gem:* PowerShell treats the **Registry** and **Environment Variables** as drives. Try `cd HKCU:` to browse your registry like a folder.
+* **`Optimize-Volume`:** Defragments or sends a TRIM command to SSDs.
+    * `Optimize-Volume -DriveLetter C -ReTrim -Verbose`
+
+---
+
+## 4. Package Management (App Installation)
+Stop downloading `.exe` files manually. Windows has a built-in package manager called **Winget**.
+
+* **`winget search <app>`:** Find an app (e.g., `winget search vscode`).
+* **`winget install <app>`:** Installs the app silently.
+* **`winget upgrade --all`:** One command to update every single app on your PC.
+* **`Get-Package`:** Lists all installed software on your system.
+
+---
+
+## 5. Running Commands & Scripting Basics
+How to actually execute things effectively.
+
+* **Direct Execution:** Type the path: `.\myscript.ps1`.
+* **`Start-Process`:** Runs a program.
+    * *Power Move:* `Start-Process notepad -Verb RunAs` (Opens Notepad as Administrator).
+* **The Pipeline (`|`):** The most powerful tool. It takes the output of one command and feeds it into the next.
+    * `Get-Service | Where-Object {$_.Status -eq "Stopped"} | Stop-Service` (Finds all stopped services and ensures they stay stopped).
+
+---
+
+## 6. Powerful but "Under-the-Radar" Commands
+
+### The "Help Me" Trio
+1.  **`Get-Help <Command> -Examples`:** Shows you exactly how to use a command with real-world snippets.
+2.  **`Get-Command *network*`:** If you don't know the name of a command, search for it using wildcards.
+3.  **`Get-Member`:** The "Inspector Gadget" command. Pipe anything to it to see what you can do with it. 
+    * `Get-Date | Get-Member` (Shows you all hidden properties of time).
+
+### Automation Gems
+* **`Export-Csv`:** Save any terminal output to an Excel-ready file.
+    * `Get-Process | Export-Csv -Path "./processes.csv"`
+* **`Out-GridView`:** Instead of a messy text list, this opens a searchable, sortable window of your data.
+    * `Get-Service | Out-GridView`
+* **`Get-History`:** See every command you've typed in this session. Use `Invoke-History <ID>` to run one again.
+* **`Stop-Computer`** / **`Restart-Computer`**: Does exactly what it says. Fast.
+
+---
+
+### Pro-Tip Summary Table
+| Goal | Command |
+| :--- | :--- |
+| Find a file | `Get-ChildItem -Filter *.txt -Recurse` |
+| Fix a script that won't run | `Unblock-File -Path <File>` |
+| Check Disk Health | `Get-PhysicalDisk | Select-Object FriendlyName, HealthStatus` |
+| Update all apps | `winget upgrade --all` |
+| See only "Running" services | `Get-Service | Where-Object Status -eq "Running"` |
+
+Since you're looking to master the terminal, would you like to see a list of "Operator" shortcuts (like `-and`, `-like`, `-match`) that make filtering data much faster?

@@ -1,0 +1,137 @@
+I hear you! Let’s ditch the "concise" and go for "encyclopedic." Since you want to know how to bridge the gap between an installed app (like VS Code) and its terminal name (like `code`), we need to look at **Environment Variables**, **Aliases**, and **Winget**.
+
+Here is the deep dive into navigation, disk management, packages, and the mystery of "Terminal Names."
+
+---
+
+## 1. The Mystery of "Terminal Names" (App Execution)
+Why is VS Code called `code`? It’s because of the **System PATH**. When you type a word into PowerShell, it looks through a list of folders (the PATH) for a file with that name (like `code.exe`).
+
+### How to find "Terminal Names" for apps:
+There isn't one single "master list" because some apps use aliases and others use their `.exe` name. Here is how to track them down:
+
+* **Option A: Using `Get-Command` (The most reliable)**
+    If you think an app is installed but don't know the command, try searching with wildcards:
+    ```powershell
+    Get-Command *visual* # Searches for any command with "visual" in it
+    Get-Command *code* # Might show you "code"
+    ```
+* **Option B: Listing everything in your "Path"**
+    This shows every single command/program currently available to you in the terminal:
+    ```powershell
+    Get-Command -CommandType Application | Select-Object Name, Definition
+    ```
+* **Option C: The Registry (Finding "App Paths")**
+    Windows stores a list of "App Paths" for things that can be run from the Run dialog or terminal:
+    ```powershell
+    Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\*" | Select-Object PSChildName
+    ```
+
+### How to Run Apps:
+1.  **Directly:** Type the name (e.g., `code`, `notepad`, `calc`).
+2.  **With Parameters:** `code .` (Opens VS Code in the current folder).
+3.  **Specific Path:** If it's not in your PATH: `& "C:\Path\To\App.exe"` (The `&` is the **Call Operator**).
+4.  **Start-Process (The Swiss Army Knife):**
+    ```powershell
+    # Opens a file with its default program
+    Start-Process "./report.pdf" 
+    
+    # Runs an installer and waits for it to finish before continuing the script
+    Start-Process "installer.exe" -ArgumentList "/S" -Wait 
+    
+    # Opens a program in a maximized window
+    Start-Process "notepad.exe" -WindowStyle Maximized
+    ```
+
+---
+
+## 2. Deep Dive: Package Management (`Winget`)
+Forget the Microsoft Store GUI. `Winget` is the engine.
+
+* **`winget list`**: Shows **everything** installed on your PC (Store apps, `.exe` installs, `.msi` installs).
+* **`winget search <name>`**: Find a new app.
+* **`winget install <ID> --location "D:\Apps"`**: Installs an app to a specific folder.
+* **`winget export -o myapps.json`**: This is a pro move. It creates a "manifest" of every app on your PC. You can take this file to a new PC and run `winget import -i myapps.json` to automatically install all your apps at once.
+
+---
+
+## 3. Deep Dive: File Navigation & Manipulation
+You asked for parameters. Here are the ones that actually matter.
+
+### `Get-ChildItem` (The Explorer)
+* **`-Recurse`**: Search subfolders.
+* **`-Force`**: See hidden or system files.
+* **`-Filter`**: Faster than `-Include`. Use it for specific types: `Get-ChildItem -Filter *.jpg`.
+* **`-Depth`**: Limit how many subfolders deep to go: `Get-ChildItem -Recurse -Depth 2`.
+* **`-ErrorAction SilentlyContinue`**: Ignores "Access Denied" errors (very useful when searching `C:\`).
+
+### `New-Item` (The Creator)
+* **`-Value`**: Add text to a file immediately: 
+    `New-Item -Path "./note.txt" -ItemType File -Value "Hello World"`.
+* **Creating empty structures:**
+    `1..5 | ForEach-Object { New-Item -Path "Folder_$_" -ItemType Directory }` (Creates 5 folders).
+
+---
+
+## 4. Deep Dive: Disk & Drive Management
+This is where PowerShell replaces heavy GUI tools.
+
+### Managing Physical Disks
+* **`Get-PhysicalDisk`**: Shows the hardware health. 
+    * *Parameter:* `Get-PhysicalDisk | Select-Object FriendlyName, MediaType, HealthStatus` (Tells you if it's an SSD or HDD and if it's dying).
+* **`Get-Partition`**: See how a disk is sliced up.
+    * `Get-Partition -DiskNumber 0`
+
+### Managing Storage (The "Barely Used" Gems)
+* **`Get-FileHash`**: Check if a file is corrupted or tampered with.
+    `Get-FileHash ./installer.exe -Algorithm SHA256`
+* **`Get-Volume`**:
+    `Get-Volume | Where-Object {$_.SizeRemaining -lt 10GB}` (Find drives with less than 10GB left).
+* **`Mount-DiskImage`**: Mount an ISO file directly from the terminal.
+    `Mount-DiskImage -ImagePath "C:\Downloads\Windows.iso"`
+
+---
+
+## 5. Permissions (The ACL Guru)
+Permissions in PowerShell are objects, not just strings of text.
+
+### The "Full Guide" Workflow:
+1.  **Get the current rules:** `$Acl = Get-Acl "C:\SecretFolder"`
+2.  **Create a Rule Object:**
+    ```powershell
+    $User = "Everyone"
+    $Rights = "ReadAndExecute"
+    $Inherit = "ContainerInherit, ObjectInherit"
+    $Prop = "None"
+    $Type = "Allow"
+    $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($User, $Rights, $Inherit, $Prop, $Type)
+    ```
+3.  **Apply it:** `$Acl.SetAccessRule($AccessRule)`
+    `Set-Acl "C:\SecretFolder" $Acl`
+
+### The "Nuke" Option (Taking Ownership):
+If you can't even read a folder, you have to take ownership first. PowerShell doesn't have a simple `Take-Ownership` cmdlet, so we use the powerful `takeown` utility inside PowerShell:
+`takeown /f "C:\LockedFolder" /r /d y`
+
+---
+
+## 6. Powerful, Barely Used "God Mode" Commands
+
+* **`Get-ComputerInfo`**: Returns a massive list of every hardware and software spec of your machine (BIOS version, RAM speed, Windows install date).
+* **`Send-MailMessage`**: Yes, you can send emails directly from the terminal (requires an SMTP server).
+* **`Invoke-WebRequest`**: Download files from the internet like `curl`.
+    `Invoke-WebRequest -Uri "https://site.com/file.zip" -OutFile "C:\file.zip"`
+* **`Enter-PSSession`**: This is true "God Mode." If you have another PC on your network, you can "remote" into its terminal: `Enter-PSSession -ComputerName OfficePC`.
+* **`Checkpoint-Computer`**: Create a System Restore Point before you do something risky.
+
+---
+
+### Comparison of "Old" vs "PowerShell"
+| Goal | Old Command (CMD) | PowerShell (The Way) |
+| :--- | :--- | :--- |
+| **Check IP** | `ipconfig` | `Get-NetIPAddress -AddressFamily IPv4` |
+| **Kill Process** | `taskkill /f /im...` | `Stop-Process -Name "chrome" -Force` |
+| **View Services**| `net start` | `Get-Service | Out-GridView` |
+| **App Paths** | `where code` | `(Get-Command code).Source` |
+
+Which of these "deep dives" would you like to see a complex script example for? For instance, I could show you a script that **automatically backs up files modified today to a zip file**.

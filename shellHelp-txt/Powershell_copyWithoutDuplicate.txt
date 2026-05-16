@@ -1,0 +1,71 @@
+To copy only the files that don't already exist in the destination, you have two main routes: the "Pure PowerShell" way and the "High-Performance" way.
+
+### 1. The High-Performance Way: `robocopy`
+While `Copy-Item` is the native PowerShell command, most professionals use **Robocopy** (Robust File Copy) for this specific task. It is built into Windows and is significantly faster and more intelligent for "syncing" folders.
+
+**The Command:**
+```powershell
+robocopy "C:\SourceFolder" "C:\DestinationFolder" /XC /XN /XO
+```
+
+**What those parameters do:**
+* **`/XC`**: Excludes **Changed** files (files with the same name but different timestamps).
+* **`/XN`**: Excludes **Newer** files.
+* **`/XO`**: Excludes **Older** files.
+* **Result:** It only copies files that do not exist at all in the destination.
+
+---
+
+### 2. The Pure PowerShell Way: `Copy-Item`
+If you want to stay strictly within PowerShell cmdlets, you have to use a loop to check for the file's existence before copying.
+
+**The Script:**
+```powershell
+$Source = "C:\SourceFolder"
+$Destination = "C:\DestinationFolder"
+
+# Get all files in the source
+Get-ChildItem -Path $Source | ForEach-Object {
+    $DestPath = Join-Path -Path $Destination -ChildPath $_.Name
+    
+    # Check if the file already exists in the destination
+    if (-not (Test-Path -Path $DestPath)) {
+        Copy-Item -Path $_.FullName -Destination $Destination
+        Write-Host "Copied: $($_.Name)" -ForegroundColor Green
+    } else {
+        Write-Host "Skipped: $($_.Name) (Already exists)" -ForegroundColor Yellow
+    }
+}
+```
+
+---
+
+### 3. The "Don't Overwrite" Parameter (Simple but limited)
+If you are using PowerShell 7 (the newer version), the `Copy-Item` command has a built-in parameter for this:
+
+```powershell
+Copy-Item -Path "C:\Source\*" -Destination "C:\Destination" -NoClobber
+```
+* **`-NoClobber`**: Tells PowerShell **not** to overwrite any existing files.
+* *Note:* In older versions of Windows PowerShell (v5.1), this parameter can sometimes be buggy or act inconsistently with folders, which is why the `if (-not (Test-Path))` method above is safer.
+
+---
+
+### Comparison of Methods
+
+| Method | Best Use Case | Pros |
+| :--- | :--- | :--- |
+| **Robocopy** | Large folders / Backups | Extremely fast; handles errors well. |
+| **Test-Path Loop**| Complex scripts | Allows you to add custom logic (like logging). |
+| **-NoClobber** | Quick one-liners | Easy to remember; no complex code. |
+
+
+
+### Pro Tip: The "WhatIf" Parameter
+Before running any command that moves or copies hundreds of files, add **`-WhatIf`** to the end of your PowerShell command:
+```powershell
+Copy-Item -Path $Source -Destination $Dest -NoClobber -WhatIf
+```
+PowerShell will print exactly what it *would* have done without actually moving a single file. It’s the ultimate "safety net" for terminal users.
+
+Would you like to see how to extend this to copy files only if the source version is **newer** than the destination version?

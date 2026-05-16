@@ -1,0 +1,75 @@
+I see the disconnect! `winget list` shows you what is **installed**, but it doesn't tell you the **command name** used to launch it. 
+
+Think of it like this: `winget list` shows you the name on the box (the Product Name), but the terminal needs the name of the actual key (the Executable Name). 
+
+Here is how you bridge that gap and find the "Terminal Name" for any app.
+
+---
+
+### 1. The "Trial and Error" Method (Fastest)
+Most apps follow a predictable pattern. If the app is "VLC Media Player," try typing the first word.
+* **VLC** -> `vlc`
+* **Spotify** -> `spotify`
+* **Postman** -> `postman`
+* **Google Chrome** -> `chrome`
+
+### 2. The "Where is it?" Method (`Get-Command`)
+If trial and error fails, use `Get-Command`. This is the most powerful tool for this specific problem. It searches your system's "Path" (the list of folders where Windows looks for programs).
+
+**The Search Command:**
+```powershell
+# Search for anything that sounds like your app
+Get-Command *docker*
+Get-Command *nvidia*
+Get-Command *python*
+```
+**How to read the result:**
+If a result pops up under the **Name** column, that is exactly what you type to run it. If nothing pops up, the app isn't in your "Path" (meaning the terminal doesn't know where it lives yet).
+
+---
+
+### 3. The "Deep Scan" (Finding the Executable)
+If `winget list` shows an app like "PowerBI Desktop," but typing `powerbi` doesn't work, we need to find the `.exe` file.
+
+**Run this to find where an app's executable is hiding:**
+```powershell
+# Replace 'Spotify' with the name you saw in 'winget list'
+$AppName = "Spotify"
+Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | 
+    Where-Object { $_.DisplayName -like "*$AppName*" } | 
+    Select-Object DisplayName, InstallLocation
+```
+
+Once you have the **InstallLocation**, you can navigate there and run the `.exe`, or run it directly:
+`& "C:\Users\Name\AppData\Local\Microsoft\WindowsApps\Spotify.exe"`
+
+---
+
+### 4. What if the app name is too long? (Aliases)
+If you find out an app is launched by typing `VeryLongApplicationName.exe`, you don't want to type that every time. You can create a temporary **Alias** for your current session:
+
+```powershell
+# Set 'v' as a shortcut for 'voidtools.everything.exe'
+Set-Alias -Name v -Value "C:\Path\To\Everything.exe"
+```
+
+---
+
+### 5. Running Apps with Arguments
+Once you find the name (e.g., `code` for VS Code), you can use arguments to make the terminal do work for you:
+
+| Command | Result |
+| :--- | :--- |
+| `code .` | Opens VS Code in the **current** folder. |
+| `chrome --incognito` | Opens Chrome in Incognito mode. |
+| `notepad filename.txt` | Opens (or creates) that specific text file. |
+| `explorer .` | Opens the Windows File Explorer in your current terminal path. |
+
+### Summary Checklist:
+1.  Run `winget list` to confirm it exists.
+2.  Try the first word of the app name.
+3.  Use `Get-Command *name*` to find the terminal keyword.
+4.  If found, just type it and hit **Enter**.
+5.  If not found, it's not in your "Path"—you'll need to use the full file path to run it.
+
+**Is there a specific app on your list right now that you're struggling to launch? Give me the name from `winget list`, and I'll find the command for you.**
