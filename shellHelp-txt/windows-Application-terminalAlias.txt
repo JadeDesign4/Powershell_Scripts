@@ -1,0 +1,14 @@
+
+aliases to open gui apps from the terminal
+
+notepad - Opens notepad
+MediaPlayer - Opens windows Media Player
+MicrosoftStore - Opens the Microsoft Store
+wscui - Control Panel
+WF - Windows Firewall
+Firewall.cpl - Opens Firewall
+UserAccountControlSettings - User Account Control Settings
+SystemPropertiesHardware - Opens Hardware settings for the pc, Also where you can create swap/paging file on windows in the " > Advanced" section
+SystemPropertiesPerformance - Opens a menu to adjust system performance, disable animations etc.
+SlideToShutDown - Slide to ShutDown system
+Expand-Archive - Unzips zipped files with ".zip" extension
